@@ -2,6 +2,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { GraduationCap } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useState } from "react";
+import CommanForm from "@/components/common-form";
+import { signUpFormControls } from "@/config/index";
 
 const AuthPage = () => {
   const [activeTab, setActiveTab] = useState("signin");
@@ -19,7 +21,7 @@ const AuthPage = () => {
         </Link>
       </header>
       <div className="flex items-center justify-center min-h-screen bg-background">
-        <Tabs 
+        <Tabs
           value={activeTab}
           defaultValue="signin"
           onValueChange={handleTabChange}
@@ -31,7 +33,9 @@ const AuthPage = () => {
           </TabsList>
 
           <TabsContent value="signin">signin</TabsContent>
-          <TabsContent value="signup">signup</TabsContent>
+          <TabsContent value="signup">
+            <CommanForm formControl={signUpFormControls} />
+          </TabsContent>
         </Tabs>
       </div>
     </div>
