@@ -12,6 +12,7 @@ import { Textarea } from "../ui/textarea";
 const FormControl = ({ formControl = [], formData, setFormData }) => {
   const renderComponentByType = (getControlItem) => {
     let element = null;
+    const currentControlItemValue = formData[getControlItem.name] || ""; // get value from form data
 
     switch (getControlItem.ComponentType) {
       case "input":
@@ -21,12 +22,24 @@ const FormControl = ({ formControl = [], formData, setFormData }) => {
             name={getControlItem.name}
             type={getControlItem.type}
             placeholder={getControlItem.placeholder}
+            value={currentControlItemValue}
+            onChange={(e) =>
+              setFormData({
+                ...formData,
+                [getControlItem.name]: e.target.value,
+              })
+            }
           />
         );
         break;
       case "select":
         element = (
-          <Select>
+          <Select
+            onValueChange={(value) =>
+              setFormData({ ...formData, [getControlItem.name]: value })
+            }
+            value={currentControlItemValue}
+          >
             <SelectTrigger className="w-full">
               <SelectValue placeholder={getControlItem.label} />
             </SelectTrigger>
@@ -43,7 +56,18 @@ const FormControl = ({ formControl = [], formData, setFormData }) => {
         );
         break;
       case "textarea":
-        element = <Textarea />;
+        element = <Textarea 
+          id={getControlItem.name}
+          name={getControlItem.name}
+          placeholder={getControlItem.placeholder}
+          value={currentControlItemValue}
+          onChange={(e) =>
+            setFormData({
+              ...formData,
+              [getControlItem.name]: e.target.value,
+            })
+          }
+        />;
         break;
       default:
         element = (
@@ -52,6 +76,13 @@ const FormControl = ({ formControl = [], formData, setFormData }) => {
             name={getControlItem.name}
             type={getControlItem.type}
             placeholder={getControlItem.placeholder}
+            value={currentControlItemValue}
+            onChange={(e) =>
+              setFormData({
+                ...formData,
+                [getControlItem.name]: e.target.value,
+              })
+            }
           />
         );
         break;
