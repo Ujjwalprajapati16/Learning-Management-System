@@ -1,5 +1,6 @@
 const User = require("../../models/User");
 const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 
 const registerUser = async (req, res) => {
   try {
@@ -47,7 +48,6 @@ const registerUser = async (req, res) => {
       message: "User registered successfully",
       success: true,
     });
-
   } catch (error) {
     console.error("Registration Error:", error.message || error);
 
@@ -59,4 +59,42 @@ const registerUser = async (req, res) => {
   }
 };
 
-module.exports = { registerUser };
+const loginUser = async (req, res) => {
+  const { UserEmail, password } = req.body;
+
+  const checkUser = await User.findOne({ UserEmail });
+
+  if (!checkUser || !(await bcrypt.compare(password, checkUser.password))) {
+    return res.status(401).json({
+      message: "Invalid credentials",
+      success: false,
+    });
+  }
+
+  const accessToken = jwt.sign(
+    {
+      _id: checkUser._id,
+      userName: checkUser.userName,
+      userEmail: checkUser.UserEmail,
+      role: checkUser.role,
+    },
+    process.env.JWT_SECRET,
+    { expiresIn: "120m" }
+  );
+
+  return res.status(200).json({
+    message: "Login successful",
+    success: true,
+    data: {
+      accessToken,
+      user: {
+        _id: checkUser._id,
+        userName: checkUser.userName,
+        userEmail: checkUser.UserEmail,
+        role: checkUser.role,
+      },
+    },
+  });
+};
+
+module.exports = { registerUser, loginUser };
